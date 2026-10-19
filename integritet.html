@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Integritet — Kalkylakuten</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Segoe UI", system-ui, sans-serif;
+    background: linear-gradient(160deg, #0f172a 0%, #1e293b 100%);
+    color: #e2e8f0; min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 48px 16px;
+  }
+  .card {
+    background: #1e293b; border: 1px solid #334155; border-radius: 16px;
+    padding: 40px; width: 100%; max-width: 640px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.4);
+    line-height: 1.6;
+  }
+  h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: 24px; }
+  h2 { font-weight: 600; margin: 24px 0 8px;
+       color: #94a3b8; text-transform: uppercase; letter-spacing: .04em;
+       font-size: .8rem; }
+  p { font-size: .92rem; margin-bottom: 8px; color: #cbd5e1; }
+  ul { font-size: .92rem; color: #cbd5e1; padding-left: 20px;
+       margin-bottom: 8px; }
+  li { margin-bottom: 4px; }
+  a { color: #64748b; }
+  footer { color: #475569; font-size: .78rem; margin-top: 24px; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>Integritet</h1>
+
+  <h2>Personuppgiftsansvarig</h2>
+  <p>Kalkylakuten (enskild firma), Sverige.
+     Kontakt: <a href="mailto:maalin.jacobsson@gmail.com">maalin.jacobsson@gmail.com</a>.</p>
+
+  <h2>Vad som behandlas</h2>
+  <ul>
+    <li><strong>Den fil du laddar upp</strong> — inklusive dess innehåll,
+        som kan innehålla personuppgifter. Filen behandlas uteslutande för
+        att utföra diagnosen och reparationen du beställt.</li>
+    <li><strong>Betalningsuppgifter</strong> — hanteras helt av Stripe.
+        Vi ser och lagrar aldrig kortnummer.</li>
+    <li><strong>Teknisk loggdata</strong> — standard serverloggar
+        (tidsstämplar, svarskoder) i Azure Log Analytics för drift och
+        felsökning.</li>
+    <li><strong>Aggregerad statistik</strong> — antal filer, storlekar
+        och fyndkategorier, för att mäta att tjänsten fungerar.
+        Aldrig cellinnehåll.</li>
+  </ul>
+
+  <h2>Var lagras filen</h2>
+  <p>Filen bearbetas och lagras tillfälligt på servrar i Sverige
+     (Azure, region Sweden Central) så att din reparation ska överleva
+     en serveromstart. Originalet, jobbdata och den reparerade filen
+     raderas automatiskt senast två timmar efter uppladdningen —
+     du behöver inte be om det.</p>
+
+  <h2>Grund och ändamål</h2>
+  <p>Behandlingen sker för att fullgöra avtalet med dig (reparera din
+     fil) och, för aggregerad statistik, med stöd av berättigat intresse.
+     Filens innehåll används aldrig för något annat ändamål — ingen AI
+     tränas på det, inget säljs vidare, ingen profilering görs.</p>
+
+  <h2>Mottagare</h2>
+  <ul>
+    <li><strong>Microsoft Azure</strong> — drift och lagring, Sverige.</li>
+    <li><strong>Stripe</strong> — betalning. Stripe behandlar
+        betalningsdata enligt sin egen integritetspolicy.</li>
+  </ul>
+
+  <h2>Cookies och lagring i din webbläsare</h2>
+  <p>Inga cookies används. Eventuell åtkomstkod lagras i din egen
+     webbläsares localStorage så att den överlever betalningsom-
+     ledningen — den lämnar aldrig din enhet.</p>
+
+  <h2>Dina rättigheter</h2>
+  <p>Du har rätt till tillgång, rättelse, radering och dataportabilitet.
+     Eftersom filer raderas automatiskt inom två timmar finns de i
+     praktiken inte kvar att begära ut. Klagomål kan lämnas till
+     Integritetsskyddsmyndigheten (IMY), imy.se.</p>
+
+  <footer>Senast uppdaterad 29 september 2026 ·
+    <a href="/">Tillbaka till Kalkylakuten</a></footer>
+</div>
+</body>
+</html>

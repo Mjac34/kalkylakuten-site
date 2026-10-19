@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /jobs
+Disallow: /process
+Disallow: /metrics
+Disallow: /webhooks
+
+Sitemap: https://kalkylakuten.se/sitemap.xml

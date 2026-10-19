@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kalkylakuten — reparerar trasiga kalkylark · diagnos gratis</title>
+<meta name="description" content="Automatisk reparation av trasiga Excel- och kalkylarksfiler — även filer som inte går att öppna. Gratis diagnos visar allt vi hittar; du betalar först om du vill ha den reparerade filen. Originalet rörs aldrig.">
+<meta property="og:title" content="Kalkylakuten — reparerar trasiga kalkylark">
+<meta property="og:description" content="Se en inspelad riktig körning: diagnos, reparation och verifierad export. Originalet rörs aldrig.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://kalkylakuten.se/">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Segoe UI", system-ui, sans-serif;
+    background: linear-gradient(160deg, #0f172a 0%, #1e293b 100%);
+    color: #e2e8f0; min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 48px 16px;
+  }
+  .card {
+    background: #1e293b; border: 1px solid #334155; border-radius: 16px;
+    padding: 40px; width: 100%; max-width: 640px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.4);
+  }
+  h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: 8px; }
+  .sub { color: #94a3b8; font-size: .95rem; margin-bottom: 24px; }
+  .demofile {
+    border: 2px dashed #475569; border-radius: 12px;
+    padding: 32px 24px; text-align: center;
+  }
+  .demofile .icon { font-size: 2.2rem; }
+  .demofile strong { display: block; margin-top: 6px; }
+  .demofile p { color: #94a3b8; margin-top: 8px; font-size: .9rem; }
+  .demofile .meta2 { color: #64748b; font-size: .78rem; margin-top: 4px; }
+  .btns { display: flex; gap: 10px; margin-top: 20px; }
+  button, .btn {
+    flex: 1; padding: 14px; text-align: center;
+    background: #0ea5e9; border: none; border-radius: 10px;
+    color: #fff; font-size: 1rem; font-weight: 600; cursor: pointer;
+    transition: background .2s; text-decoration: none; display: inline-block;
+  }
+  button:hover, .btn:hover { background: #0284c7; }
+  button:disabled { background: #334155; cursor: not-allowed; }
+  .btn.ghost { background: #1e293b; border: 1px solid #475569; }
+  .btn.ghost:hover { background: #334155; }
+
+  .progress { margin-top: 24px; display: none; }
+  .bar {
+    height: 8px; background: #0f172a; border-radius: 999px;
+    overflow: hidden; margin-bottom: 14px;
+  }
+  .bar > div {
+    height: 100%; width: 0; background: #38bdf8; border-radius: 999px;
+    transition: width .4s ease;
+  }
+  .steps { list-style: none; font-size: .85rem; }
+  .steps li {
+    padding: 4px 0; color: #475569; display: flex; gap: 10px; align-items: center;
+  }
+  .steps li .dot {
+    width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0;
+    border: 2px solid #334155; display: inline-block;
+  }
+  .steps li.done { color: #86efac; }
+  .steps li.done .dot { background: #16a34a; border-color: #16a34a; }
+  .steps li.active { color: #e2e8f0; font-weight: 600; }
+  .steps li.active .dot {
+    border-color: #38bdf8; border-top-color: transparent;
+    animation: r .8s linear infinite;
+  }
+  .elapsed { color: #64748b; font-size: .8rem; margin-top: 10px; text-align: right; }
+
+  .result { margin-top: 24px; display: none; }
+  .badge {
+    display: inline-block; padding: 4px 12px; border-radius: 999px;
+    font-size: .8rem; font-weight: 600;
+  }
+  .badge.clean { background: #14532d; color: #86efac; }
+  .badge.warn  { background: #713f12; color: #fde68a; }
+  .badge.fail  { background: #7f1d1d; color: #fca5a5; }
+  .meta { color: #94a3b8; font-size: .85rem; margin: 10px 0 16px; }
+  .summary-list { list-style: none; margin: 0 0 16px; font-size: .88rem; }
+  .summary-list li { padding: 4px 0 4px 22px; position: relative; color: #cbd5e1; }
+  .summary-list li::before { content: "✓"; position: absolute; left: 0; color: #4ade80; }
+  .summary-list li.note::before { content: "ℹ"; color: #38bdf8; }
+  .summary-list li.find::before { content: "⚠"; color: #fbbf24; }
+  .issues {
+    display: none; margin: 0 0 16px; padding: 12px;
+    background: #2a1215; border: 1px solid #7f1d1d; border-radius: 8px;
+    font-size: .85rem;
+  }
+  .issues h3 { font-size: .85rem; color: #fca5a5; margin-bottom: 6px; }
+  .issues ul { list-style: none; }
+  .issues li { padding: 3px 0 3px 20px; position: relative; color: #fecaca; }
+  .issues li::before { content: "✗"; position: absolute; left: 0; color: #f87171; }
+  .download {
+    display: block; text-align: center; padding: 14px;
+    background: #16a34a; border-radius: 10px; color: #fff;
+    font-weight: 600; text-decoration: none; margin-top: 12px;
+  }
+  .download:hover { background: #15803d; }
+  .verdict { color: #e2e8f0; font-size: .92rem; margin: 6px 0 14px; line-height: 1.45; }
+  .paybtn { background: #16a34a; }
+  .paybtn:hover { background: #15803d; }
+  .paynote {
+    color: #64748b; font-size: .78rem; line-height: 1.5; margin-top: 12px;
+  }
+  details { margin-top: 16px; font-size: .82rem; }
+  summary { cursor: pointer; color: #94a3b8; }
+  pre {
+    background: #0f172a; border-radius: 8px; padding: 12px; margin-top: 8px;
+    max-height: 280px; overflow: auto; white-space: pre-wrap; word-break: break-all;
+    font-size: .75rem; color: #94a3b8;
+  }
+  .cap { margin-top: 24px; }
+  .cap h2 { font-size: .95rem; color: #cbd5e1; margin-bottom: 8px; }
+  .cap .summary-list li { color: #94a3b8; font-size: .85rem; }
+  .cap .paynote { margin-top: 6px; }
+  .cta {
+    margin-top: 24px; padding: 16px;
+    background: #0f2740; border: 1px solid #38bdf8; border-radius: 10px;
+    font-size: .9rem; line-height: 1.5;
+  }
+  .cta b { color: #38bdf8; }
+  .cta a { color: #38bdf8; }
+  .disclaimer {
+    margin-top: 24px; padding: 12px 14px;
+    background: #0f172a; border: 1px solid #334155; border-radius: 8px;
+    color: #64748b; font-size: .78rem; line-height: 1.5;
+  }
+  footer a { color: #64748b; }
+  @keyframes r { to { transform: rotate(360deg); } }
+  footer { color: #475569; font-size: .78rem; margin-top: 32px;
+           text-align: center; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>Kalkylakuten</h1>
+  <p class="sub">Automatisk diagnos och reparation av trasiga
+  kalkylark — även filer som inte går att öppna alls. Varje ändring
+  loggas cell för cell, originalet lämnas alltid orört.</p>
+
+  <div class="demofile">
+    <div class="icon">📄</div>
+    <strong>demofil.xlsx</strong>
+    <p>En svensk budgetfil på 30 000 rader — byggd för att innehålla
+    exakt de problem som tyst förstör beslutsunderlag: dolda
+    beroenden, cirkelreferenser, externa länkar, trasiga summeringar.</p>
+    <p class="meta2">2,0 MB · 271 747 celler · 150 724 formler</p>
+  </div>
+
+  <div class="btns">
+    <a class="btn ghost" href="demofil.xlsx" download>Ladda ner filen</a>
+    <button id="go">Kör diagnosen</button>
+  </div>
+  <p class="paynote">Det här är en inspelad riktig körning av
+  demofilen — ingen fil laddas upp, inget lämnar din webbläsare.
+  Tidsangivelserna är de riktiga.</p>
+
+  <div class="progress" id="progress">
+    <div class="bar"><div id="barfill"></div></div>
+    <ul class="steps" id="steps"></ul>
+    <div class="elapsed" id="elapsed"></div>
+  </div>
+
+  <div class="result" id="diagnosis">
+    <span class="badge warn">Diagnos klar</span>
+    <p class="meta" id="diagmeta"></p>
+    <p class="verdict" id="diagverdict"></p>
+    <ul class="summary-list" id="findingslist"></ul>
+    <ul class="summary-list" id="noteslist"></ul>
+    <button id="repair" class="paybtn">Kör reparation och validering</button>
+    <p class="paynote">I den riktiga tjänsten kostar detta steg
+    <b>299 kr inkl. moms</b> — med automatisk återbetalning om
+    reparationen misslyckas. Här kör du gratis.</p>
+  </div>
+
+  <div class="result" id="result">
+    <span class="badge" id="badge"></span>
+    <div class="issues" id="issues"><h3>Flaggas för granskning — aldrig ändrat automatiskt</h3><ul id="issueslist"></ul></div>
+    <p class="meta" id="meta"></p>
+    <p class="verdict" id="resverdict"></p>
+    <ul class="summary-list" id="summarylist"></ul>
+    <a class="download" href="demofil-reparerad.xlsx" download>Ladda ner den reparerade filen</a>
+    <p class="meta" style="margin-top:8px">Öppna den i Excel — den har
+    fått flikarna <b>Rapport</b>, <b>Granska dessa</b> och
+    <b>Ändringslogg</b> där varje åtgärd redovisas.</p>
+    <details><summary>Visa teknisk rapport</summary><pre id="log"></pre></details>
+  </div>
+
+  <div class="cta">
+    <b>Vill du köra en riktig fil?</b> Tjänsten körs just nu på
+    beställning — maila
+    <a href="mailto:maalin.jacobsson@gmail.com?subject=Kalkylakuten%20—%20filreparation">maalin.jacobsson@gmail.com</a>
+    så sätter jag upp en körning åt dig. Diagnos kostar inget;
+    reparation och validering 299 kr inkl. moms, återbetalas om det
+    misslyckas.
+  </div>
+
+  <div class="cap" id="cap">
+    <h2>Vanliga problem som åtgärdas</h2>
+    <ul class="summary-list">
+      <li>Filer som inte går att öppna — avbrutna eller halvt sparade</li>
+      <li>#REF!, #DIV/0! och andra felvärden i celler och formler</li>
+      <li>Cirkelreferenser som får Excel att vägra räkna</li>
+      <li>Summeringar som tyst missar rader som lagts till efteråt</li>
+      <li>Dolda blad och beroenden som styr siffrorna i det synliga</li>
+      <li>Namngivna områden som pekar fel och externa länkar till filer
+          som inte följer med</li>
+      <li>Textdatum, tal lagrade som text och dubbletter</li>
+    </ul>
+    <p class="paynote">Det som inte kan åtgärdas flaggas i rapporten
+    istället — inget döljs.</p>
+  </div>
+
+  <div class="disclaimer">
+    Kalkylakuten reparerar filens struktur och innehåll automatiskt.
+    Ingen AI läser filen — reparationen är deterministisk kod där varje
+    ändring loggas cell för cell. Vid beställning körs filen på servrar
+    i Sverige och raderas inom två timmar. Granska alltid resultatet
+    innan du använder filen.
+  </div>
+</div>
+<footer>
+  <a href="villkor.html">Köpvillkor</a> ·
+  <a href="integritet.html">Integritet</a> ·
+  <a href="mailto:maalin.jacobsson@gmail.com?subject=Kalkylakuten%20feedback">Rapportera fel / ge feedback</a>
+</footer>
+
+<script src="data.js"></script>
+<script>
+const STAGES_FREE = [
+  ['loader',      'Läser in filen'],
+  ['diagnostics', 'Diagnostiserar skador'],
+  ['structure',   'Analyserar struktur'],
+  ['source_detection', 'Identifierar datakällor'],
+];
+const STAGES_PAID = [
+  ['cleaning',    'Tvättar data'],
+  ['formulas',    'Reparerar formler'],
+  ['validation',  'Validerar resultatet'],
+  ['export',      'Bygger och exporterar ren fil'],
+];
+const prog = document.getElementById('progress'),
+      barfill = document.getElementById('barfill'),
+      stepsEl = document.getElementById('steps'),
+      elapsedEl = document.getElementById('elapsed'),
+      diag = document.getElementById('diagnosis'),
+      res = document.getElementById('result'),
+      goBtn = document.getElementById('go'),
+      repairBtn = document.getElementById('repair');
+let t0 = 0, clockTimer = null;
+
+function startClock() {
+  t0 = Date.now();
+  clockTimer = setInterval(() => {
+    elapsedEl.textContent =
+      'Förfluten tid: ' + ((Date.now() - t0) / 1000).toFixed(1) + ' s';
+  }, 100);
+}
+
+function stopClock() { clearInterval(clockTimer); }
+
+// render a stage list; `done` stages are ticked, `active` spins.
+// scale compresses the real timing for replay.
+function playStages(stages, timings, scale, onDone) {
+  const total = stages.reduce((a, s) => a + (timings[s[0]] || 0), 0);
+  barfill.style.width = '0%';
+  stepsEl.innerHTML = stages.map(s =>
+    '<li id="st-' + s[0] + '"><span class="dot"></span>' + s[1] + '</li>'
+  ).join('');
+
+  let i = 0, acc = 0;
+  const stepMs = Math.max(350, 350);   // never flash a stage faster than ~350 ms
+  function next() {
+    if (i > 0) {
+      document.getElementById('st-' + stages[i - 1][0]).className = 'done';
+    }
+    if (i === stages.length) {
+      barfill.style.width = '100%';
+      setTimeout(onDone, 300);
+      return;
+    }
+    const [key] = stages[i];
+    document.getElementById('st-' + key).className = 'active';
+    const dur = Math.max(stepMs, (timings[key] || 0.1) * 1000 * scale);
+    acc += dur;
+    barfill.style.width = Math.round(acc / (total * 1000 * scale) * 100) + '%';
+    i++;
+    setTimeout(next, dur);
+  }
+  next();
+}
+
+function showDiagnosis() {
+  const d = DEMO_DIAG, dg = d.diagnosis;
+  const stats = dg.stats || {};
+  document.getElementById('diagmeta').textContent =
+    d.filename + ' · ' + (d.input_bytes / 1048576).toFixed(1) + ' MB · ' +
+    stats.sheets + ' blad · ' + (stats.cells || 0).toLocaleString('sv-SE') +
+    ' celler · ' + (stats.formulas || 0).toLocaleString('sv-SE') + ' formler';
+  document.getElementById('diagverdict').textContent = dg.verdict;
+  const fl = document.getElementById('findingslist');
+  fl.innerHTML = '';
+  dg.findings.forEach(f => {
+    const li = document.createElement('li');
+    li.className = 'find';
+    li.textContent = f;
+    fl.appendChild(li);
+  });
+  const nl = document.getElementById('noteslist');
+  nl.innerHTML = '';
+  (dg.notes || []).forEach(n => {
+    const li = document.createElement('li');
+    li.className = 'note';
+    li.textContent = n;
+    nl.appendChild(li);
+  });
+  diag.style.display = 'block';
+  diag.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function showResult() {
+  const d = DEMO_RESULT, s = d.summary || {};
+  const badge = document.getElementById('badge');
+  const labels = { clean: 'Ren', clean_with_warnings: 'Ren med varningar',
+                   failed: 'Fel kvarstår' };
+  badge.textContent = labels[d.status] || d.status;
+  badge.className = 'badge ' + (d.status === 'clean' ? 'clean'
+    : d.status === 'failed' ? 'fail' : 'warn');
+
+  document.getElementById('meta').textContent =
+    d.filename + ' · ' + (d.output_bytes / 1048576).toFixed(1) + ' MB ut · ' +
+    d.elapsed_seconds.toFixed(1) + ' s i produktion (på riktigt)';
+  document.getElementById('resverdict').textContent = s.verdict || '';
+
+  const rem = s.remaining || [];
+  const box = document.getElementById('issues'), il =
+    document.getElementById('issueslist');
+  if (rem.length) {
+    il.innerHTML = '';
+    rem.forEach(x => {
+      const li = document.createElement('li');
+      li.textContent = x;
+      il.appendChild(li);
+    });
+    box.style.display = 'block';
+  }
+  const sl = document.getElementById('summarylist');
+  sl.innerHTML = '';
+  (s.fixed || []).forEach(x => {
+    const li = document.createElement('li');
+    li.textContent = x;
+    sl.appendChild(li);
+  });
+  (s.notes || []).forEach(x => {
+    const li = document.createElement('li');
+    li.className = 'note';
+    li.textContent = x;
+    sl.appendChild(li);
+  });
+  const log = (d.report && d.report.log) || [];
+  document.getElementById('log').textContent = log.map(r =>
+    (r.ts || '') + ' [' + (r.stage || '') + '] ' + (r.msg || JSON.stringify(r))
+  ).join('\n');
+  res.style.display = 'block';
+  res.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+goBtn.onclick = () => {
+  goBtn.disabled = true;
+  goBtn.textContent = 'Kör diagnosen …';
+  document.getElementById('cap').style.display = 'none';
+  diag.style.display = 'none'; res.style.display = 'none';
+  prog.style.display = 'block';
+  startClock();
+  // real timings, real speed
+  playStages(STAGES_FREE, DEMO_DIAG.stage_timings, 1.0, () => {
+    stopClock();
+    prog.style.display = 'none';
+    showDiagnosis();
+  });
+};
+
+repairBtn.onclick = () => {
+  repairBtn.disabled = true;
+  repairBtn.textContent = 'Reparerar …';
+  diag.style.display = 'none';
+  prog.style.display = 'block';
+  startClock();
+  // paid phase is ~35 s on the real box — replay at 3× speed
+  playStages(STAGES_PAID, DEMO_RESULT.stage_timings, 0.33, () => {
+    stopClock();
+    prog.style.display = 'none';
+    showResult();
+  });
+};
+</script>
+</body>
+</html>
